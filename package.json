@@ -1,0 +1,32 @@
+{
+	"name": "@arijs/framework",
+	"version": "0.0.1",
+	"description": "AriJS Framework",
+	"main": "index.js",
+	"browser": "dist/arijs-framework.iife.js",
+	"export_var": "AriFramework",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/arijs/ariframework.git"
+	},
+	"author": "Rafael Hengles <rhengles@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/arijs/ariframework/issues"
+	},
+	"homepage": "https://github.com/arijs/ariframework#readme",
+	"dependencies": {
+		"@arijs/frontend": "git+ssh://git@github.com/arijs/front-end.git",
+		"@arijs/stream-xml-parser": "git+ssh://git@github.com/arijs/stream-xml-parser.git"
+	},
+	"devDependencies": {
+		"@rollup/plugin-buble": "^0.21.3",
+		"@rollup/plugin-inject": "^4.0.1",
+		"@rollup/plugin-node-resolve": "^7.1.3",
+		"rollup": "^2.6.1",
+		"rollup-plugin-uglify": "^6.0.4"
+	}
+}
