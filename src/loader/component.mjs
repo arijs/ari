@@ -1,87 +1,75 @@
 import loadAjax from '@arijs/frontend/src/loaders/ajax';
 import loadScript from '@arijs/frontend/src/loaders/script';
 import loadStylesheet from '@arijs/frontend/src/loaders/stylesheet';
+import extend from '@arijs/frontend/src/utils/extend';
+// import {applyListeners} from '@arijs/frontend/src/utils/listeners';
 
-export function compPrefixPath(prefix, id) {
+export function prefix(id, opt) {
 	//console.log('Component Dynamic: '+id);
+	var {prefix, basePath = '', namePrefix = ''} = opt;
+	prefix = String(prefix).toLowerCase();
 	var plen = prefix.length;
 	if (id.substr(0, plen).toLowerCase() === prefix) {
 		var path = id.substr(plen).replace(/--/g,'/');
 		var last = path.lastIndexOf('/');
 		var name = path.substr(last+1);
-		var href = path+'/'+name;
-		return {
-			id,
-			path,
-			name,
-			href
-		};
+		var href = basePath+path+'/'+name;
+		var fullName = namePrefix + path;
+		return {...opt, id, href, path, name, fullName};
 	}
 }
 
-export function fnPrefixLoader(opt) {
-	var listenersMap = {};
-	return match;
-	function match(id) {
-		var match = compPrefixPath(opt.prefix, id);
-		var getUrl = opt.getUrl;
-		var setResult = opt.setResult;
-		var pathHtml = opt.pathHtml;
-		var pathJs = opt.pathJs;
-		var pathCss = opt.pathCss;
+function compPathBase(param, match) {
+	return param instanceof Function ? param(match) : match.href;
+}
+function compPathResource(param, match, extension) {
+	return param === false ? null :
+		param instanceof Function ? param(match) :
+		match.url + extension;
+}
+
+export function componentMatcher(opt) {
+	// var listenersMap = {};
+	return {get};
+	function get() {
+		var match = opt.match.apply(this, arguments);
+		// var [name] = args;
+		// var match = compPrefixPath(opt.prefix, name);
 		if (match) {
-			match.url      = getUrl   ? getUrl  (match) : match.href;
-			match.pathHtml = pathHtml ? pathHtml(match) : match.url+'.html';
-			match.pathJs   = pathJs   ? pathJs  (match) : match.url+'.js'  ;
-			match.pathCss  = pathCss  ? pathCss (match) : match.url+'.css' ;
-			match.load = function(callback, params) {
-				match.params = params;
-				return prefixLoader(match, callback);
-			};
-			if (setResult instanceof Function) {
-				match.setResult = function(callback, load) {
-					setResult(match, callback, load);
-				};
-			}
+			match.args      = arguments;
+			match.optMatch  = opt;
+			match.onLoad    = opt.onLoad;
+			match.url       = compPathBase(opt.getUrl, match);
+			match.pathHtml  = compPathResource(opt.pathHtml, match, '.html');
+			match.pathJs    = compPathResource(opt.pathJs  , match, '.js'  );
+			match.pathCss   = compPathResource(opt.pathCss , match, '.css' );
+			return opt.onMatch(match);
 		}
-		return match;
 	}
-	function prefixLoader(match, callback) {
-		var path = match.path;
-		var loadedMap = opt.loadedMap;
-		var comp = loadedMap && loadedMap[path];
-		if (comp) return callback(null, comp, match);
-		var matchListeners = listenersMap[path];
-		if (matchListeners) {
-			matchListeners.push(callback);
-			return;
-		}
-		listenersMap[path] = matchListeners = [callback];
-
-		// var fnLoad = opt.loader(match);
-		// fnLoad(function resolve() {
-		// 	comp = match.result;
-		// 	loadedMap && (loadedMap[path] = comp);
-		// 	// return callback(null, comp);
-		// 	for (var i = 0, ii = matchListeners.length; i < ii; i++) {
-		// 		matchListeners[i](null, comp, match);
-		// 	}
-		// 	listenersMap[path] = void 0;
-		// }, function reject(err) {
-		// 	for (var i = 0, ii = matchListeners.length; i < ii; i++) {
-		// 		matchListeners[i](err, comp, match);
-		// 	}
-		// 	listenersMap[path] = void 0;
-		// });
-	}
+	// function prefixLoader(match, callback) {
+	// 	var path = match.path;
+	// 	var matchListeners = listenersMap[path];
+	// 	if (matchListeners) {
+	// 		matchListeners.push(callback);
+	// 		return;
+	// 	}
+	// 	listenersMap[path] = matchListeners = [callback];
+	// 	match.cb = function(error) {
+	// 		loadedMap && !error && (loadedMap[path] = this);
+	// 		applyListeners(matchListeners, arguments, this);
+	// 		listenersMap[path] = void 0;
+	// 	};
+	// 	loadComponent(match);
+	// }
 }
 
-export default function loadComponent(opt) {
+export function loadComponent(opt) {
 	//console.log('Component Dynamic: '+id);
 	var load = {
-		opt: opt,
+		optMatch: opt,
 		comp: {
 			error: null,
+			data: null,
 			done: !opt.setResult
 		},
 		html: {
@@ -120,19 +108,20 @@ export default function loadComponent(opt) {
 		if (!load.done && html.done && js.done && (css.done || !opt.waitCss)) {
 			if (comp.done) {
 				anyError();
-				opt.cb(load);
+				opt.onLoad(load);
 			} else {
-				opt.setResult(function(error) {
-					comp.error = error;
+				opt.setResult(load, function(compResult) {
+					extend(comp, compResult);
 					comp.done = true;
 					itemLoad();
-				}, load)
+				});
 			}
 		}
 	}
 	loadAjax({
 		url: html.path,
 		cb(resp) {
+			html.done = true;
 			html.error = resp.error;
 			html.data = resp.data;
 			html.resp = resp;
@@ -140,10 +129,11 @@ export default function loadComponent(opt) {
 		}
 	});
 	loadScript(js.path, function(error) {
+		js.done = true;
 		js.error = error;
-		if (!error && opt.dataJs) {
+		if (!error && opt.getJsData) {
 			try {
-				js.data = opt.dataJs();
+				js.data = opt.getJsData(opt);
 			} catch (e) {
 				js.error = e;
 			}
@@ -151,7 +141,10 @@ export default function loadComponent(opt) {
 		itemLoad();
 	});
 	loadStylesheet(css.path, function(error) {
+		css.done = true;
 		css.error = error;
 		itemLoad();
 	});
 }
+
+export default loadComponent;

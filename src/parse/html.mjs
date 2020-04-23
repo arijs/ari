@@ -2,7 +2,7 @@ import {decode} from '@arijs/frontend/src/utils/html-entities';
 import {TreeBuilder, XMLParser} from '@arijs/stream-xml-parser/src/index';
 import elementDefault from '@arijs/stream-xml-parser/src/element/default';
 
-export default function parseHtml(html, elAdapter = elementDefault) {
+export default function parseHtml(html, elAdapter = elementDefault()) {
 	var tb = new TreeBuilder({
 		element: elAdapter
 	});

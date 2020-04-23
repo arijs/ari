@@ -24,17 +24,17 @@ const noMinify = opt && opt.noMinify;
 
 function format(opt, plugin) {
 	if (!(opt.plugins instanceof Array)) opt.plugins = [];
+	opt.plugins.unshift(inject({
+		// 'extend': ['@arijs/frontend/src/utils/extend.mjs', 'extend']
+		// path.resolve('polyfill/object-assign.mjs')
+		'extend': path.resolve( 'polyfill/extend.js' )
+	}));
 	opt.plugins.unshift(buble({
 		objectAssign: 'extend',
 		transforms: {
 			dangerousForOf: true,
 			...(opt.transforms || {})
 		}
-	}));
-	opt.plugins.unshift(inject({
-		// 'extend': ['@arijs/frontend/src/utils/extend.mjs', 'extend']
-		// path.resolve('polyfill/object-assign.mjs')
-		'extend': path.resolve( 'polyfill/extend.js' )
 	}));
 	opt.plugins.unshift(resolve({
 		// resolveOnly: [/^@arijs\/(frontend|stream-xml-parser)\//gi],
@@ -53,10 +53,10 @@ function format(opt, plugin) {
 var list = [];
 
 format({
-	input: 'src/parse/html.mjs',
+	input: 'test/prefix-loader/index.mjs',
 	output: {
-		name: pkg.export_var,
-		file: pkg.browser,
+		// name: pkg.export_var,
+		file: 'dist/test/prefix-loader.js',//pkg.browser,
 		format: 'iife',
 		indent: '',
 		globals: {

@@ -21,7 +21,7 @@ export default function parseComponent(node, opt = {}) {
 	// var ctx;
 	// var elAdapter = StreamXMLParser.elementDefault();
 	// html = fw_parseHtml(html, elAdapter);
-	const {
+	let {
 		// node,
 		elAdapter,
 		parsePlugin,

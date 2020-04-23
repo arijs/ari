@@ -5,7 +5,7 @@ export default function fnParseNode(elementHandler) {
 	function parseNode(name, attrs, children, elAdapter, ctxParse, ctx, node, trPlugin) {
 		var handler;
 		if (elementHandler) {
-			handler = elementHandler.get(name, attrs, children, ctxParse, ctx, node);
+			handler = elementHandler.get({name, attrs, children, elAdapter, ctxParse, ctx, node});
 		}
 		var parseChildren = handler && handler.parseChildren || treeRenderPlugin;
 		var parseElement = handler && handler.parseElement;

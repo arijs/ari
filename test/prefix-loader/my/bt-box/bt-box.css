@@ -1,0 +1,69 @@
+.my--bt-box {}
+
+.app-bt-box {
+	position: relative;
+	color: #fff;
+	text-decoration: none;
+}
+.app-bt-box .bt-bg {
+	position: absolute;
+	left: 0;
+	right: 1.75vw;
+	top: 1.75vw;
+	bottom: 0;
+	background: #F7ACC4;
+}
+.app-bt-box .bt-box {
+	position: absolute;
+	left: 1.75vw;
+	right: 0;
+	top: 0;
+	bottom: 1.75vw;
+	background: #EC2F6C;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+}
+.app-bt-box .bt-content {
+	margin: 1.75vw 0 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.app-bt-box .bt-icon {
+	width: 6.25vw; /*1.775*3.5vh;*/
+	height: 6.25vw; /*1.775*3.5vh;*/
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+.app-bt-box .bt-icon:first-child {
+	margin-left: 1.75vw;
+}
+.app-bt-box .bt-icon:last-child {
+	margin-right: 5.25vw; /*1.775*3vh;*/
+}
+.app-bt-box .bt-label {
+	margin: 0 1.75vw;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: stretch;
+}
+.app-bt-box .bt-label-main {
+	font-size: 1.3em;
+	font-weight: bold;
+}
+.app-bt-box .bt-label-alt {
+	font-size: 0.9em;
+}
+.app-bt-box .bt-border {
+	position: absolute;
+	left: 0;
+	right: 1.75vw;
+	top: 1.75vw;
+	bottom: 0;
+	border: 0.625vw solid #000; /*1.775*0.37vh*/
+}
