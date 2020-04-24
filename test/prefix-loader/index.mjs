@@ -42,7 +42,6 @@ const myPrefix = {
 }
 
 const myLoader = componentMatcher({
-	// prefix: 'my--',
 	match: ({name}) => prefix(name, myPrefix),
 	onMatch(match) {
 		var {id} = match;
