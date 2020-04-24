@@ -4,7 +4,8 @@ import parseComponent from './parse/component';
 import renderComponent from './render/component';
 import extendNewOnly from '@arijs/frontend/src/utils/extend';
 
-export function component({name, html, js, props, propMods, node, context: ctxParent, elementHandler, onRender}) {
+export function component(opt) {
+	var {name, html, js, props, propMods, node, context: ctxParent, elementHandler, onRender} = opt;
 	if (node) {
 		var {nodeProps, nodePropMods} = getPropsFromNode(node, ctxParent);
 		if (nodeProps) props = extendNewOnly(props, nodeProps);

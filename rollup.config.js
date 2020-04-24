@@ -5,7 +5,7 @@ import { uglify } from 'rollup-plugin-uglify';
 // import minify from 'rollup-plugin-babel-minify';
 import buble from '@rollup/plugin-buble';
 import inject from '@rollup/plugin-inject';
-import pkg from './package.json';
+// import pkg from './package.json';
 
 function beforeExt(name, add) {
 	var i = name.lastIndexOf('.');

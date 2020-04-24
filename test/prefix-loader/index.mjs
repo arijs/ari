@@ -1,8 +1,10 @@
 import {
 	composeApis,
 	mapName,
+	functionList,
 } from '../../src/handler/element';
 import componentHandler from '../../src/handler/component';
+import htmlHandler from '../../src/handler/html';
 import component from '../../src/component';
 import {componentMatcher, prefix, loadComponent} from '../../src/loader/component';
 import {extendDeepCreate} from '@arijs/frontend/src/utils/extend';
@@ -24,8 +26,7 @@ var componentError = {
 	'
 };
 
-const loadManager = composeApis();
-
+const skipHtml = functionList([htmlHandler]);
 const myCache = mapName();
 const myLoading = mapName();
 
@@ -80,11 +81,11 @@ const myLoader = componentMatcher({
 	}
 });
 
-loadManager.setList([myCache, myLoading, myLoader]);
+const handlerManager = composeApis([skipHtml, myCache, myLoading, myLoader]);
 
 component({
 	html: '<my--bt-box></my--bt-box>',
-	elementHandler: loadManager,
+	elementHandler: handlerManager,
 	context: {
 		store: {
 			"( bar ) (key)": "value start - ( bar ) (key) - value end",
