@@ -92,9 +92,6 @@ const myLoader = loadPrefix({
 	tag: 'my--',
 	basePath: 'my/',
 	name: 'my/',
-	getJsData({path}) {
-		return MyComp[path];
-	},
 	onMatch(match) {
 		var {id} = match;
 		var ch = componentHandler();
@@ -102,6 +99,7 @@ const myLoader = loadPrefix({
 		compEx = extendDeepCreate({}, componentLoading, compEx);
 		ch.setComponent(compEx);
 		myLoading.set(id, ch);
+		match.getJsData = ({path}) => MyComp[path];
 		match.onLoad = function({
 			error,
 			html: {data: html, error: htmlError},
