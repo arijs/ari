@@ -1,7 +1,6 @@
 import {
 	composeApis,
 	mapName,
-	functionList,
 } from '../../src/handler/element';
 import componentHandler from '../../src/handler/component';
 import htmlHandler from '../../src/handler/html';
@@ -27,7 +26,6 @@ var componentError = {
 	'
 };
 
-const skipHtml = functionList([htmlHandler]);
 const myCache = mapName();
 const myLoading = mapName();
 
@@ -75,7 +73,7 @@ const myLoader = loadPrefix({
 	}
 });
 
-const handlerManager = composeApis([skipHtml, myCache, myLoading, myLoader]);
+const handlerManager = composeApis([htmlHandler, myCache, myLoading, myLoader]);
 
 component({
 	html: '<my--bt-box></my--bt-box>',
