@@ -20,6 +20,8 @@ These are the features already implemented and those still to do:
 - [ ] Implement slots
 - [ ] Write tests
 - [ ] Write documentation
+- [ ] Write router
+- [ ] Write server side rendering
 
 This framework still lacks many big things, it's very early in the development. But this is also a opportunity to participate in it.
 
