@@ -165,6 +165,8 @@ $ git clone https://github.com/arijs/ariframework.git
 $ cd ariframework
 
 $ npm install
+
+$ npx rollup -c
 ```
 
 ### Use your server
