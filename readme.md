@@ -159,6 +159,30 @@ component({
 });
 ```
 
+## How to run
+
+### Install
+
+```
+$ git clone https://github.com/arijs/ariframework.git
+
+$ cd ariframework
+
+$ npm install
+```
+
+### Use your server
+
+Now use your server to access it. For example:
+
+```
+$ npm install http-server -g
+
+$ npx http-server
+```
+
+Now you can visit http://localhost:8080/test/prefix-loader/ to see it in action.
+
 ## License
 
 [MIT](LICENSE).
