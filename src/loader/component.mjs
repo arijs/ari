@@ -4,65 +4,6 @@ import loadStylesheet from '@arijs/frontend/src/loaders/stylesheet';
 import extend from '@arijs/frontend/src/utils/extend';
 // import {applyListeners} from '@arijs/frontend/src/utils/listeners';
 
-export function prefix(id, opt) {
-	//console.log('Component Dynamic: '+id);
-	var {prefix, basePath = '', namePrefix = ''} = opt;
-	prefix = String(prefix).toLowerCase();
-	var plen = prefix.length;
-	if (id.substr(0, plen).toLowerCase() === prefix) {
-		var path = id.substr(plen).replace(/--/g,'/');
-		var last = path.lastIndexOf('/');
-		var name = path.substr(last+1);
-		var href = basePath+path+'/'+name;
-		var fullName = namePrefix + path;
-		return {...opt, id, href, path, name, fullName};
-	}
-}
-
-function compPathBase(param, match) {
-	return param instanceof Function ? param(match) : match.href;
-}
-function compPathResource(param, match, extension) {
-	return param === false ? null :
-		param instanceof Function ? param(match) :
-		match.url + extension;
-}
-
-export function componentMatcher(opt) {
-	// var listenersMap = {};
-	return {get};
-	function get() {
-		var match = opt.match.apply(this, arguments);
-		// var [name] = args;
-		// var match = compPrefixPath(opt.prefix, name);
-		if (match) {
-			match.args      = arguments;
-			match.optMatch  = opt;
-			match.onLoad    = opt.onLoad;
-			match.url       = compPathBase(opt.getUrl, match);
-			match.pathHtml  = compPathResource(opt.pathHtml, match, '.html');
-			match.pathJs    = compPathResource(opt.pathJs  , match, '.js'  );
-			match.pathCss   = compPathResource(opt.pathCss , match, '.css' );
-			return opt.onMatch(match);
-		}
-	}
-	// function prefixLoader(match, callback) {
-	// 	var path = match.path;
-	// 	var matchListeners = listenersMap[path];
-	// 	if (matchListeners) {
-	// 		matchListeners.push(callback);
-	// 		return;
-	// 	}
-	// 	listenersMap[path] = matchListeners = [callback];
-	// 	match.cb = function(error) {
-	// 		loadedMap && !error && (loadedMap[path] = this);
-	// 		applyListeners(matchListeners, arguments, this);
-	// 		listenersMap[path] = void 0;
-	// 	};
-	// 	loadComponent(match);
-	// }
-}
-
 export function loadComponent(opt) {
 	//console.log('Component Dynamic: '+id);
 	var load = {

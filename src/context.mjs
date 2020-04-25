@@ -60,11 +60,12 @@ export default function context(opt) {
 		props,
 		propMods,
 		ctxParent,
-		js: fnContext = defaultContext,
 		elementHandler,
 		cbError,
 	} = opt;
+	let {js} = opt;
 	if (ctxParent) {
+		// these must be 'var' to be seen outside the 'if'
 		var {
 			store,
 			storeMods,
@@ -92,5 +93,6 @@ export default function context(opt) {
 		el: null,
 		getApi: (el) => (ctx.el = el, ctx),
 	};
-	return fnContext.call(apiContext, ctx);
+	if (!(js instanceof Function)) js = defaultContext;
+	return js.call(apiContext, ctx);
 }

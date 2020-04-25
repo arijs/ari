@@ -6,7 +6,8 @@ import {
 import componentHandler from '../../src/handler/component';
 import htmlHandler from '../../src/handler/html';
 import component from '../../src/component';
-import {componentMatcher, prefix, loadComponent} from '../../src/loader/component';
+import loadComponent from '../../src/loader/component';
+import loadPrefix from '../../src/loader/prefix';
 import {extendDeepCreate} from '@arijs/frontend/src/utils/extend';
 import replaceNodes from '@arijs/frontend/src/dom/replace-nodes';
 import {queryStringify} from '@arijs/frontend/src/utils/query-string';
@@ -32,17 +33,13 @@ const myLoading = mapName();
 
 window.MyComp = {};
 
-const myPrefix = {
-	prefix: 'my--',
+const myLoader = loadPrefix({
+	tag: 'my--',
 	basePath: 'my/',
-	namePrefix: 'my/',
+	name: 'my/',
 	getJsData({path}) {
 		return MyComp[path];
 	},
-}
-
-const myLoader = componentMatcher({
-	match: ({name}) => prefix(name, myPrefix),
 	onMatch(match) {
 		var {id} = match;
 		var ch = componentHandler();
