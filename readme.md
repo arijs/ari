@@ -161,3 +161,7 @@ component({
 	}
 });
 ```
+
+## License
+
+[MIT](LICENSE).
