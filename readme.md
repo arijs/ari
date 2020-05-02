@@ -31,6 +31,11 @@ I hated angular because it imposed its way of doing things. Then came out other 
 
 ## Example
 
+> ### ⚠ Warning
+>
+> The text below is slightly outdated, the code was refactored to pave the way for future features.
+> See the last commits for reference. This text will be updated soon.
+
 The following is a (almost?) complete example of everything already supported.
 
 It defines a structure to load components dynamically, those components whose name begins with the prefix "my--". Then it defines what component to render while the requested component loads, and another component to render in case there is any error in the process of loading the component.

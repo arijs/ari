@@ -1,19 +1,22 @@
+import each from '@arijs/frontend/src/utils/for-each';
 import {treeRenderPlugin} from '@arijs/stream-xml-parser/src/treerender';
 
-export default function fnParseNode(elementHandler) {
+export default function fnParseNode(elementHandler, extraSave) {//, partialHandlers
 	return parseNode;
-	function parseNode(name, attrs, children, elAdapter, ctxParse, ctx, node, trPlugin) {
-		var handler;
-		if (elementHandler) {
-			handler = elementHandler.get({name, attrs, children, elAdapter, ctxParse, ctx, node});
-		}
-		var parseChildren = handler && handler.parseChildren || treeRenderPlugin;
-		var parseElement = handler && handler.parseElement;
-		children = parseChildren(node, elAdapter, ctx, trPlugin, null, true, ctxParse);
-		children = elAdapter.childrenGet(children);
-		node = { name, attrs, children, node, handler };
-		return parseElement instanceof Function
-			? parseElement(node, ctxParse, ctx, trPlugin)
-			: node;
+	function parseNode(opt) {
+		var handler = elementHandler.get(opt);
+		// var partial = each(partialHandlers, function(ph) {
+		// 	var match = ph.get(opt);
+		// 	if (match) {
+		// 		if (match.parseNode instanceof Function) {
+		// 			opt = match.parseNode(opt);
+		// 		}
+		// 		this.result.push(match);
+		// 	}
+		// }, []);
+		var {node, elAdapter, ctx, trPlugin} = opt;
+		treeRenderPlugin(node, elAdapter, ctx, trPlugin);
+		extraSave(node, {handler});//partial, 
+		return node;
 	}
 }

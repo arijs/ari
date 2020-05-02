@@ -1,7 +1,7 @@
 import {printfParse} from '@arijs/frontend/src/printf';
 
-export default function parseText(str, elAdapter) {
-	var nodes = printfParse(str);
+export default function parseText({text, elAdapter}) {
+	var nodes = printfParse(text);
 	var c = nodes.length;
 	for (var i = 0; i < c; i++) {
 		var inputNode = nodes[i];

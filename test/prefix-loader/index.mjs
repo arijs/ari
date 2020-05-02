@@ -1,13 +1,12 @@
 import {
-	composeApis,
+	composeHandlers,
 	mapName,
 } from '../../src/handler/element';
-import componentHandler from '../../src/handler/component';
 import htmlHandler from '../../src/handler/html';
 import component from '../../src/component';
-import loadComponent from '../../src/loader/component';
-import loadPrefix from '../../src/loader/prefix';
-import {extendDeepCreate} from '@arijs/frontend/src/utils/extend';
+// import loadComponent from '../../src/loader/component';
+import prefixLoader from '../../src/loader/prefix';
+// import {extendDeepCreate} from '@arijs/frontend/src/utils/extend';
 import replaceNodes from '@arijs/frontend/src/dom/replace-nodes';
 import {queryStringify} from '@arijs/frontend/src/utils/query-string';
 import {numberFormat} from '@arijs/frontend/src/utils/number-string';
@@ -26,57 +25,40 @@ var componentError = {
 	'
 };
 
-const myCache = mapName();
-const myLoading = mapName();
+// prefix loader with loading and error components
 
 window.MyComp = {};
 
-const myLoader = loadPrefix({
-	tag: 'my--',
+const myLoader = prefixLoader({
+	prefix: 'my--',
 	basePath: 'my/',
-	name: 'my/',
-	onMatch(match) {
-		var {id} = match;
-		var ch = componentHandler();
-		var compEx = {props: {name: match.fullName}};
-		compEx = extendDeepCreate({}, componentLoading, compEx);
-		ch.setComponent(compEx);
-		myLoading.set(id, ch);
-		match.getJsData = ({path}) => MyComp[path];
-		match.onLoad = function({
-			error,
-			html: {data: html, error: htmlError},
-			js: {data: js, error: jsError},
-			css: {error: cssError},
-			comp: {error: compError}
-		}) {
-			if (error) {
-				compEx = {props: {
-					name: match.fullName,
-					error: String(error),
-					htmlStatus: String(htmlError || 'OK'),
-					jsStatus: String(jsError || 'OK'),
-					cssStatus: String(cssError || 'OK'),
-					compStatus: String(compError || 'OK'),
-				}};
-				compEx = extendDeepCreate({}, componentError, compEx);
-				ch.setComponent(compEx);
-			} else {
-				var comp = {html, js};
-				myCache.set(id, componentHandler(comp));
-				ch.setComponent(comp);
-			}
-			myLoading.set(id, void 0);
-		};
-		loadComponent(match);
-		return ch;
-	}
+	getJsData: ({path}) => MyComp[path],
+	loadDelay: 5000,
+	componentLoading,
+	componentError,
 });
 
-const handlerManager = composeApis([htmlHandler, myCache, myLoading, myLoader]);
+// prefix loader with custom storage handlers for loaded and loading components
+
+window.FooComp = {};
+
+const fooCache = mapName();
+const fooLoading = mapName();
+
+const fooLoader = prefixLoader({
+	prefix: 'foo--',
+	basePath: 'foo/',
+	getJsData: ({path}) => FooComp[path],
+	handlerCache: fooCache,
+	handlerLoading: fooLoading,
+});
+
+// combine all handlers into one manager, in the order they will be tested
+
+const handlerManager = composeHandlers([htmlHandler, fooCache, fooLoading, myLoader, fooLoader]);
 
 component({
-	html: '<my--bt-box></my--bt-box>',
+	html: '<my--bt-box></my--bt-box><foo--404/><bar--404/>',
 	elementHandler: handlerManager,
 	context: {
 		store: {
@@ -96,5 +78,8 @@ component({
 	},
 	onRender({el}) {
 		replaceNodes(null, el, document.querySelector('body'))
+	},
+	onError(error, comp) {
+		console.error(error, comp);
 	}
 });

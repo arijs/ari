@@ -1,11 +1,25 @@
+import renderChildren from '../render/tree/children';
+import testHandler, {testHtml} from './test';
 
-const reHtml = /^[a-z0-9]+$/;
-const handler = {};
-
-export default {
-	get({name}) {
-		if (reHtml.test(name)) return handler;
-		// this is just a optimization to avoid checking
-		// every html tag to see if it is a component
+export const htmlHandlerRaw = {
+	renderElement(opt) {
+		const {node, elAdapter, renderAdapter} = opt;
+		let out;
+		if (elAdapter.isComment(node)) {
+			return renderAdapter.initComment();
+		} else if (elAdapter.isFragment(node)) {
+			out = renderAdapter.initFragment();
+		} else {
+			out = renderAdapter.initName(elAdapter.nameGet(node));
+			elAdapter.attrsEach(node, function(name, value, attr) {
+				renderAdapter.attrsAdd(out, attr || {name, value});
+			});
+		}
+		renderChildren(opt, {targetTree: out});
+		return out;
 	}
-}
+};
+
+export const htmlHandler = testHandler(testHtml, htmlHandlerRaw);
+
+export default htmlHandler;

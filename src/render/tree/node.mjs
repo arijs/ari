@@ -1,11 +1,30 @@
-import {treeRenderPlugin} from '@arijs/stream-xml-parser/src/treerender';
-import renderElementDefault from './element/default';
+// import each from '@arijs/frontend/src/utils/for-each';
 
-export default function renderNode(node, elAdapter, renderAdapter, ctxRender, ctx, pluginRender) {
-	var handler = node.handler;
-	var renderElement = handler && handler.renderElement || renderElementDefault;
-	var renderChildren = handler && handler.renderChildren || treeRenderPlugin;
-	var outTree = renderChildren(node, elAdapter, ctx, pluginRender, renderAdapter, true, ctxRender);
-	elAdapter.childrenSet(node, renderAdapter.childrenGet(outTree));
-	return renderElement({node, elAdapter, renderAdapter, ctxRender, ctx});
+// function getSubContextDefault(ctx) { return ctx; }
+
+export default function renderNode(opt) {
+	const { ctxRender: {elementHandler: rootHandler, onError} } = opt;
+	return renderHandler(rootHandler, opt);
+	function renderHandler(nextHandler, opt) {
+		const others = {
+			nextHandler,
+			rootHandler,
+		};
+		const otherHandlers = {
+			next: (opt) => renderHandler(others.nextHandler, opt),
+			root: (opt) => renderHandler(rootHandler, opt),
+		};
+		if (nextHandler.injectOthers instanceof Function) {
+			nextHandler.injectOthers(others);
+		}
+		const handler = nextHandler.get(opt.node, opt);
+		if (handler) {
+			return handler.renderElement(opt, otherHandlers);
+		} else {
+			const {node, elAdapter, renderAdapter} = opt;
+			const message = 'No handler found for node '+elAdapter.nameGet(node);
+			onError({ message, node, opt });
+			return renderAdapter.initComment(message);
+		}
+	}
 }

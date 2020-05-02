@@ -20,8 +20,8 @@ export function getCtxVars(ctx) {
 	return getDictionaries(list, name);
 }
 
-export function injectVars(ctx, name, cbError) {
-	ctx.vars = new DynamicList(getCtxVars(ctx), name, cbError);
+export function injectVars(ctx, name, onError) {
+	ctx.vars = new DynamicList(getCtxVars(ctx), name, onError);
 }
 
 export function getCtxMods(ctx) {
@@ -29,19 +29,19 @@ export function getCtxMods(ctx) {
 	return getDictionaries(list, name);
 }
 
-export function injectMods(ctx, name, cbError) {
-	ctx.mods = new DynamicList(getCtxMods(ctx), name, cbError);
+export function injectMods(ctx, name, onError) {
+	ctx.mods = new DynamicList(getCtxMods(ctx), name, onError);
 }
 
-export function injectGetValue(ctx, vars, mods, cbError, name) {
-	ctx.getValue = fnRenderVarsMods(vars, mods, cbError, name);
+export function injectGetValue(ctx, vars, mods, onError, name) {
+	ctx.getValue = fnRenderVarsMods(vars, mods, onError, name);
 }
 
 export function defaultContext(ctx) {
-	var {name = '<no name>', cbError} = ctx;
-	this.injectVars(ctx, name+' context vars', cbError);
-	this.injectMods(ctx, name+' context mods', cbError);
-	this.injectGetValue(ctx, ctx.vars, ctx.mods, cbError, name+' getValue');
+	var {name = '<no name>', onError} = ctx;
+	this.injectVars(ctx, name+' context vars', onError);
+	this.injectMods(ctx, name+' context mods', onError);
+	this.injectGetValue(ctx, ctx.vars, ctx.mods, onError, name+' getValue');
 	return ctx;
 }
 
@@ -52,16 +52,21 @@ export const apiContext = {
 	injectMods,
 	injectGetValue,
 	defaultContext,
+	Dynamic,
+	DynamicList,
+	fnRenderVarsMods,
 };
+
+function nop() {}
 
 export default function context(opt) {
 	const {
-		name,
+		ref,
 		props,
 		propMods,
 		ctxParent,
 		elementHandler,
-		cbError,
+		onError,
 	} = opt;
 	let {js} = opt;
 	if (ctxParent) {
@@ -71,11 +76,11 @@ export default function context(opt) {
 			storeMods,
 			context,
 			contextMods,
-			cbError: cbErrorParent,
+			onError: onErrorParent,
 		} = ctxParent;
 	}
 	const ctx = {
-		name,
+		ref,
 		opt,
 		data: null,
 		dataMods: null,
@@ -85,13 +90,15 @@ export default function context(opt) {
 		storeMods,
 		context,
 		contextMods,
-		cbError: cbError || cbErrorParent,
+		childrenDefault: nop,
+		childrenNamed: {},
+		onError: onError || onErrorParent,
 		vars: null,
 		mods: null,
 		elementHandler,
 		getValue: null,
 		el: null,
-		getApi: (el) => (ctx.el = el, ctx),
+		getApi(el) { ctx.el = el; return ctx; },
 	};
 	if (!(js instanceof Function)) js = defaultContext;
 	return js.call(apiContext, ctx);
