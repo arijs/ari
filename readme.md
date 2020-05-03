@@ -25,7 +25,7 @@ These are the features already implemented and those still to do:
 - [x] Mechanism to load a component dynamically
 - [ ] Bind attributes
 - [ ] Bind events
-- [ ] "if" directive
+- [ ] "if" directive **(in progress)**
 - [ ] "for" directive
 - [ ] Implement slots
 - [ ] Write tests
