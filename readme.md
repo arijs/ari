@@ -1,8 +1,18 @@
 # AriJS
 
+## Highlights
+
+- **No Virtual DOM:** AriJS keeps track of which elements are bound to which variables, when a variable changes, the affected elements are updated directly without comparing every element. This is good for performance and the simplicity of rendering.
+- **Ultra flexible:** You choose how you want to use it. You have access to the low-level components and you can modify or extend every builtin behavior, or you can just use high-level apis and let the framework do the heavy lifting for you. It is almost a meta-framework, a library that doesn't stand in your way.
+- **Lazy load for components:** There's no need to bundle every component into your application even if they're not used. You don't even have to mantain a list of component names, or generate one during build. AriJS provides a loader which can resolve a component path from its tag name, and load its html, js and css only when it's actually required.
+- **Template based:** It's not impossible for AriJS to support JSX, but this feature does not exist yet. However, it would kind of defeat the point, because it would introduce significant complexity. It's harder to parse javascript *and* html, instead of just parsing html. And there's an advantage to using templates. They're simpler, don't require you to compile your script, but I think the fundamental difference is keeping your markup and behavior separated.
+
+  Think about PHP: it started as a templating language, to dynamically print your html. But now that style is frowned upon. Having an imperative language to generate your html (a declarative language) gives a lot of power, but with great power comes great responsibility. And a free footgun. Leaving your template separated allows you to use it outside your frontend framework.
+- **Modular and lightweight:** The core of the framework is parsing html and binding variables to a notification system. Every other feature is provided as handlers: objects that define how tags are rendered. They are composable, each handler can call the next allowing features to be composed together. This gives them absolute freedom about how to render elements.
+
 ## Features
 
-This framework originated from my insatisfaction of all the popular frameworks' method of rendering - comparing virtual DOM. I thought, "why can't updates mutate only exactly the elements that changed?" and this is what came out from that. I think it is similar to Svelte, without actually compiling your application.
+This framework originated from my insatisfaction of all the popular frameworks' method of rendering - comparing virtual DOM. I thought, "why can't updates mutate only exactly the elements that changed?" and this is what came out from that. I think it is similar (*in concept, not in api*) to Svelte, without actually compiling your application.
 
 These are the features already implemented and those still to do:
 
