@@ -78,13 +78,14 @@ export default function prefixLoader(opt) {
 				componentExtend(componentLoading, compEx);
 			var ch = componentHandler(compEx, 'Loading '+name);
 			loading.set(name, ch);
-			match.onLoad = function({
-				error,
-				html: {data: html, error: htmlError},
-				js: {data: js, error: jsError},
-				css: {error: cssError},
-				comp: {error: compError}
-			}) {
+			match.onLoad = function(load) {
+				const {
+					error,
+					html: {data: html, error: htmlError},
+					js: {data: js, error: jsError},
+					css: {error: cssError},
+					comp: {error: compError}
+				} = load;
 				if (error) {
 					compEx = {props: {
 						...props,
@@ -99,7 +100,7 @@ export default function prefixLoader(opt) {
 					ch.setCommentText('Loading '+name+': '+error);
 					ch.setComponent(compEx);
 					const { ctxRender: { onError } } = optHandler;
-					onError({ message: String(error), node, opt: optHandler });
+					onError({ message: String(error), load, node, opt: optHandler });
 				} else {
 					var comp = {ref: match, html, js};
 					cache.set(name, componentHandler(comp));
