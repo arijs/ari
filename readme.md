@@ -119,7 +119,7 @@ const store = new Dynamic({
 let iv_if0;
 const if0TimerChange = (v) => {
 	if (v && !iv_if0) {
-		let last = v;
+		let last = store.get('if-0');
 		iv_if0 = setInterval(() => store.set('if-0', last = !last), 1000);
 	} else if (!v && iv_if0) {
 		iv_if0 = void clearInterval(iv_if0);
