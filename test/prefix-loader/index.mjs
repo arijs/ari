@@ -1,15 +1,15 @@
+import replaceNodes from '@arijs/frontend/src/dom/replace-nodes';
+import {queryStringify} from '@arijs/frontend/src/utils/query-string';
+import {numberFormat} from '@arijs/frontend/src/utils/number-string';
 import {
 	composeHandlers,
 	mapName,
 } from '../../src/handler/element';
 import htmlHandler from '../../src/handler/html';
 import component from '../../src/component';
-// import loadComponent from '../../src/loader/component';
 import prefixLoader from '../../src/loader/prefix';
-// import {extendDeepCreate} from '@arijs/frontend/src/utils/extend';
-import replaceNodes from '@arijs/frontend/src/dom/replace-nodes';
-import {queryStringify} from '@arijs/frontend/src/utils/query-string';
-import {numberFormat} from '@arijs/frontend/src/utils/number-string';
+
+// prefix loader with loading and error components
 
 var componentLoading = {
 	html: '<div>Please wait, loading component {name}...</div>'
@@ -24,8 +24,6 @@ var componentError = {
 	<div>COMP: {compStatus}</div>\n\
 	'
 };
-
-// prefix loader with loading and error components
 
 window.MyComp = {};
 
