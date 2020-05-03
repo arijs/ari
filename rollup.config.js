@@ -55,7 +55,7 @@ var list = [];
 format({
 	input: 'test/prefix-loader/index.mjs',
 	output: {
-		// name: pkg.export_var,
+		name: 'ariTestPrefix',
 		file: 'dist/test/prefix-loader.js',//pkg.browser,
 		format: 'iife',
 		indent: '',

@@ -1,5 +1,5 @@
 
-export function composeHandlers(list = []) {
+export default function composeHandlers(list = []) {
 	let others;
 	const api = {
 		injectOthers(ot) { others = ot; },
@@ -15,12 +15,7 @@ export function composeHandlers(list = []) {
 				if (handler) {
 					if (others) {
 						var subList = list.slice(i+1, c);
-						var nh = others.nextHandler;
-						if (nh) {
-							nh.setList(nh.getList().concat(subList));
-						} else {
-							others.nextHandler = nh = composeHandlers(subList);
-						}
+						others.nextHandler = composeHandlers(subList);
 						others.rootHandler = api;
 						others = void 0;
 					}
@@ -30,16 +25,6 @@ export function composeHandlers(list = []) {
 		},
 		setList: (newList) => list = newList,
 		getList: () => list,
-	};
-	return api;
-}
-
-export function mapName(map = {}) {
-	const api = {
-		get: ({name}) => map[name],
-		set: (name, handler) => map[name] = handler,
-		setMap: (newMap) => map = newMap,
-		getMap: () => map,
 	};
 	return api;
 }

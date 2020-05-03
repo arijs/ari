@@ -2,7 +2,7 @@ import testHandler from './test';
 import {callListeners} from '@arijs/frontend/src/utils/listeners';
 import {arrayConcat} from '@arijs/frontend/src/utils/collection';
 import replaceNodes from '@arijs/frontend/src/dom/replace-nodes';
-import {printfGetMatch} from '@arijs/frontend/src/printf';
+import {printfGetMatch} from '@arijs/frontend/src/printf/parse';
 
 export default function ifHandler(ifResult, ifOpt) {
 	var commentText = ifOpt && ifOpt.commentText || '';
@@ -51,7 +51,7 @@ export default function ifHandler(ifResult, ifOpt) {
 export function ifTester(test) {
 	return testHandler(
 		test,
-		({result: {ifSrc, text, key, mod, params}, ctxRender}) => {
+		({result: {ifSrc, text, key, mod, params}, opt: {ctxRender}}) => {
 			const ih = ifHandler(ctxRender.getValue(key, mod, params, function(update) {
 				ih.setIfResult(update);
 			}), {commentText: 'ifHandler '+(ifSrc||'')+' = '+text});
@@ -60,7 +60,7 @@ export function ifTester(test) {
 	);
 }
 
-export function ifTestAttrPrintf(ifAttrName) {
+export function ifTestAttr(ifAttrName) {
 	return function (node, {elAdapter}) {
 		var found;
 		elAdapter.attrsEach(node, function(name, value) {
@@ -72,4 +72,8 @@ export function ifTestAttrPrintf(ifAttrName) {
 		});
 		return found;
 	};
+}
+
+export function ifAttr(ifAttrName) {
+	return ifTester(ifTestAttr(ifAttrName));
 }

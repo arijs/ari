@@ -57,6 +57,12 @@ export const apiContext = {
 	fnRenderVarsMods,
 };
 
+export {
+	Dynamic,
+	DynamicList,
+	fnRenderVarsMods,
+};
+
 function nop() {}
 
 export default function context(opt) {

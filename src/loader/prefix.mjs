@@ -1,4 +1,4 @@
-import {mapName} from '../handler/element';
+import mapName from '../handler/map-name';
 import testHandler, {fnTestNamePrefix} from '../handler/test';
 import componentHandler from '../handler/component';
 import loadComponent from '../loader/component';

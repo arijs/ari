@@ -1,13 +1,13 @@
 import replaceNodes from '@arijs/frontend/src/dom/replace-nodes';
 import {queryStringify} from '@arijs/frontend/src/utils/query-string';
 import {numberFormat} from '@arijs/frontend/src/utils/number-string';
-import {
-	composeHandlers,
-	mapName,
-} from '../../src/handler/element';
+import composeHandlers from '../../src/handler/compose';
+import mapName from '../../src/handler/map-name';
 import htmlHandler from '../../src/handler/html';
 import component from '../../src/component';
 import prefixLoader from '../../src/loader/prefix';
+import {ifAttr} from '../../src/handler/if';
+import {Dynamic} from '../../src/context';
 
 // prefix loader with loading and error components
 
@@ -53,27 +53,48 @@ const fooLoader = prefixLoader({
 
 // combine all handlers into one manager, in the order they will be tested
 
-const handlerManager = composeHandlers([htmlHandler, fooCache, fooLoading, myLoader, fooLoader]);
+const handlerManager = composeHandlers([ifAttr('a-if'), htmlHandler, fooCache, fooLoading, myLoader, fooLoader]);
 
-component({
-	html: '<my--bt-box></my--bt-box><foo--404/><bar--404/>',
-	elementHandler: handlerManager,
-	context: {
-		store: {
-			"( bar ) (key)": "value start - ( bar ) (key) - value end",
-			"labelMain": Math.PI * 1e6,
-			"labelSub": {a:1,b:2}
-		},
-		storeMods: {
-			"(adv) ( foo )": function(val, params) {
-				return JSON.stringify({val: val, params: params});
-			},
-			"nr": function(val, params) {
-				return numberFormat(val, params.dlen, params.dsep, params.gsep, params.glen);
-			},
-			"fn": queryStringify
-		}
+const store = new Dynamic({
+	"( bar ) (key)": "value start - ( bar ) (key) - value end",
+	"labelMain": Math.PI * 1e6,
+	"labelSub": {a:1,b:2},
+	"if-0": true,
+	"if-0-timer": true,
+}, 'AriJS TestPrefix Store');
+
+let iv_if0;
+const if0TimerChange = (v) => {
+	if (v && !iv_if0) {
+		let last = v;
+		iv_if0 = setInterval(() => store.set('if-0', last = !last), 1000);
+	} else if (!v && iv_if0) {
+		iv_if0 = void clearInterval(iv_if0);
+	}
+}
+if0TimerChange(store.get('if-0-timer', if0TimerChange));
+
+const storeMods = new Dynamic({
+	"(adv) ( foo )": function(val, params) {
+		return JSON.stringify({val, params});
 	},
+	"nr": function(val, {dlen, dsep, gsep, glen} = {dlen: 2}) {
+		return numberFormat(val, dlen, dsep, gsep, glen);
+	},
+	"fn": queryStringify,
+	"not": v => !v,
+}, 'AriJS TestPrefix StoreMods');
+
+export default component({
+	html: '\n\
+	<my--bt-box></my--bt-box>\n\
+	<foo--404/>\n\
+	<bar--404/>\n\
+	<div a-if="{if-0}" style="background:lime;">if 0 true</div>\n\
+	<div a-if="{not:if-0}" style="background:red;">if 0 false</div>\n\
+	',
+	elementHandler: handlerManager,
+	context: { store, storeMods },
 	onRender({el}) {
 		replaceNodes(null, el, document.querySelector('body'))
 	},
@@ -81,3 +102,12 @@ component({
 		console.error(error, comp);
 	}
 });
+
+/*
+// Try running this on the developer console:
+
+ariTestPrefix.store.set('if-0-timer', false)
+
+ariTestPrefix.store.set('if-0-timer', true)
+
+*/
