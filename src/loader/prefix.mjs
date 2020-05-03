@@ -55,7 +55,7 @@ export default function prefixLoader(opt) {
 	const loading = optLoading || mapName();
 	return testHandler(
 		fnTestNamePrefix(opt.prefix),
-		({result: match, node, optHandler}) => {
+		({result: match, node, opt: optHandler}) => {
 			var ch, compEx;
 			match = getPrefixPaths({...opt, ...match});
 			var {
@@ -98,6 +98,8 @@ export default function prefixLoader(opt) {
 						componentExtend(componentError, compEx);
 					ch.setCommentText('Loading '+name+': '+error);
 					ch.setComponent(compEx);
+					const { ctxRender: { onError } } = optHandler;
+					onError({ message: String(error), node, opt: optHandler });
 				} else {
 					var comp = {ref: match, html, js};
 					cache.set(name, componentHandler(comp));
