@@ -1,27 +1,11 @@
 import context from './context';
 import parseHtml from './parse/html';
-// import parseComponent from './parse/component';
 import renderComponent from './render/component';
 import {
 	extendNewOnly,
 	extendDeepCreate,
 } from '@arijs/frontend/src/utils/extend';
 import {arrayConcat} from '@arijs/frontend/src/utils/collection';
-
-export function fnOnErrorDefault(list) {
-	onErrorDefault.extend = extend;
-	return onErrorDefault;
-	function onErrorDefault(error) {
-		console.error(
-			'Error on component',
-			error,
-			list,
-		);
-	}
-	function extend(ex) {
-		return fnOnErrorDefault([].concat(list || [], ex || []));
-	}
-}
 
 function onErrorDefault(error, comp) {
 	console.error(
