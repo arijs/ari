@@ -45,9 +45,11 @@ I hated angular because it imposed its way of doing things. Then came out other 
 >
 > See how the api evolved in previous versions.
 >
-> [2020-05-02 Example 00](https://github.com/arijs/ariframework/blob/master/docs/example-00.md)
+> [2020-05-02 Example 00](https://github.com/arijs/ari/blob/master/docs/example-00.md)
 
 The following showcases how you can create dynamic loaders which will load components with the path inferred from the component tag name.
+
+This example is deliberately more complex than necessary only to showcase many features at once. 
 
 ```javascript
 // This file is in /test/prefix-loader/index.mjs
