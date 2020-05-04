@@ -171,9 +171,9 @@ ariTestPrefix.store.set('if-0-timer', true)
 ### Install
 
 ```
-$ git clone https://github.com/arijs/ariframework.git
+$ git clone https://github.com/arijs/ari.git
 
-$ cd ariframework
+$ cd ari
 
 $ npm install
 
